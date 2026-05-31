@@ -700,6 +700,41 @@
     letter-spacing: 1px;
   }
 
+  /* ── RESPONSIVE ── */
+  @media (max-width: 1024px) {
+    .main-grid { grid-template-columns: 1fr; }
+    .bottom-grid { grid-template-columns: 1fr 1fr; }
+    .hero { grid-template-columns: 1fr; gap: 30px; }
+    .hero-visual { height: 220px; }
+    .nav-links { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    .metrics-row { grid-template-columns: 1fr 1fr; }
+    .bottom-grid { grid-template-columns: 1fr; }
+    .hero-title { font-size: 2rem; }
+    .hero-title .line3 { font-size: 1.2rem; }
+    .header-status { display: none; }
+    .logo-text { font-size: 1.1rem; }
+    .container { padding: 0 14px; }
+    footer { flex-direction: column; gap: 6px; text-align: center; }
+  }
+
+  @media (max-width: 480px) {
+    .metrics-row { grid-template-columns: 1fr; }
+    .hero-title { font-size: 1.5rem; }
+    .hero-title .line3 { font-size: 1rem; }
+    .hero-actions { flex-direction: column; }
+    .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+    .metric-value { font-size: 1.5rem; }
+    .hero-visual { height: 180px; }
+    .globe-ring:nth-child(1) { width: 180px; height: 180px; }
+    .globe-ring:nth-child(2) { width: 140px; height: 140px; }
+    .globe-ring:nth-child(3) { width: 100px; height: 100px; }
+    .panel-title { font-size: 0.6rem; letter-spacing: 1px; }
+    .device-item { flex-wrap: wrap; }
+  }
+
   /* TICKER */
   .ticker-bar {
     background: rgba(0,255,180,0.04);
