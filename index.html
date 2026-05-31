@@ -1,1 +1,1228 @@
-<h1>THis is  my capstone project</h1>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZeroShield — Zero Trust IoT Framework</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #020810;
+    --bg2: #060f1e;
+    --panel: rgba(0,255,180,0.03);
+    --border: rgba(0,255,180,0.15);
+    --border-hot: rgba(0,255,180,0.5);
+    --accent: #00ffb4;
+    --accent2: #00c8ff;
+    --danger: #ff3b5c;
+    --warn: #ffaa00;
+    --text: #c8e8d8;
+    --text-dim: #4a7060;
+    --glow: 0 0 20px rgba(0,255,180,0.3);
+    --glow-danger: 0 0 20px rgba(255,59,92,0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,255,180,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,255,180,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Scanning line animation */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    animation: scan 4s linear infinite;
+    z-index: 1;
+    opacity: 0.6;
+  }
+
+  @keyframes scan {
+    0% { top: -2px; }
+    100% { top: 100vh; }
+  }
+
+  .container {
+    position: relative;
+    z-index: 2;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* HEADER */
+  header {
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    background: rgba(2,8,16,0.95);
+    backdrop-filter: blur(20px);
+    z-index: 100;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .logo-icon {
+    width: 42px;
+    height: 42px;
+    position: relative;
+  }
+
+  .logo-icon svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 8px var(--accent));
+  }
+
+  .logo-text {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(0,255,180,0.5);
+  }
+
+  .logo-sub {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    margin-top: 2px;
+  }
+
+  .header-status {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 1px;
+    background: var(--panel);
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  .status-dot.warn { background: var(--warn); box-shadow: 0 0 8px var(--warn); }
+  .status-dot.danger { background: var(--danger); box-shadow: 0 0 8px var(--danger); }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.8); }
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 4px;
+  }
+
+  .nav-link {
+    padding: 8px 16px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+    border-radius: 2px;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--accent);
+    border-color: var(--border);
+    background: var(--panel);
+  }
+
+  /* HERO */
+  .hero {
+    padding: 60px 0 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .hero-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 3rem;
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+  }
+
+  .hero-title .line1 { color: var(--text); }
+  .hero-title .line2 {
+    color: var(--accent);
+    text-shadow: 0 0 30px rgba(0,255,180,0.4);
+  }
+  .hero-title .line3 { color: var(--accent2); font-size: 1.8rem; }
+
+  .hero-desc {
+    font-size: 1rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    font-weight: 400;
+    max-width: 480px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 14px;
+  }
+
+  .btn-primary {
+    padding: 12px 28px;
+    background: var(--accent);
+    color: var(--bg);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border: none;
+    cursor: pointer;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: all 0.2s;
+    box-shadow: var(--glow);
+  }
+
+  .btn-primary:hover {
+    background: #00ffe0;
+    box-shadow: 0 0 40px rgba(0,255,180,0.5);
+    transform: translateY(-1px);
+  }
+
+  .btn-secondary {
+    padding: 12px 28px;
+    background: transparent;
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    border: 1px solid var(--border-hot);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover {
+    background: rgba(0,255,180,0.08);
+    box-shadow: var(--glow);
+  }
+
+  /* THREAT GLOBE */
+  .hero-visual {
+    position: relative;
+    height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .globe-ring {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    animation: rotate linear infinite;
+  }
+
+  .globe-ring:nth-child(1) { width: 280px; height: 280px; animation-duration: 20s; border-color: rgba(0,255,180,0.2); }
+  .globe-ring:nth-child(2) { width: 220px; height: 220px; animation-duration: 14s; animation-direction: reverse; border-style: dashed; border-color: rgba(0,200,255,0.2); }
+  .globe-ring:nth-child(3) { width: 160px; height: 160px; animation-duration: 8s; border-color: rgba(0,255,180,0.3); }
+
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  .globe-core {
+    width: 80px;
+    height: 80px;
+    background: radial-gradient(circle, rgba(0,255,180,0.3), rgba(0,255,180,0.05));
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--glow), inset 0 0 30px rgba(0,255,180,0.1);
+    animation: breathe 3s ease-in-out infinite;
+    position: relative;
+    z-index: 2;
+  }
+
+  @keyframes breathe {
+    0%, 100% { box-shadow: var(--glow), inset 0 0 30px rgba(0,255,180,0.1); }
+    50% { box-shadow: 0 0 40px rgba(0,255,180,0.5), inset 0 0 40px rgba(0,255,180,0.2); }
+  }
+
+  .globe-core-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 8px var(--accent));
+  }
+
+  /* Threat nodes on ring */
+  .threat-node {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--danger);
+    box-shadow: 0 0 12px var(--danger);
+    animation: blink 1.5s ease-in-out infinite;
+  }
+
+  .threat-node:nth-child(4) { top: 30px; right: 60px; animation-delay: 0s; }
+  .threat-node:nth-child(5) { bottom: 50px; left: 40px; animation-delay: 0.5s; background: var(--warn); box-shadow: 0 0 12px var(--warn); }
+  .threat-node:nth-child(6) { top: 80px; left: 30px; animation-delay: 1s; }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.3; transform: scale(0.6); }
+  }
+
+  /* METRICS ROW */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .metric-card {
+    padding: 20px 24px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-top: 2px solid var(--accent);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+
+  .metric-card:hover {
+    border-color: var(--border-hot);
+    background: rgba(0,255,180,0.05);
+    box-shadow: var(--glow);
+  }
+
+  .metric-card.danger-card { border-top-color: var(--danger); }
+  .metric-card.warn-card { border-top-color: var(--warn); }
+  .metric-card.info-card { border-top-color: var(--accent2); }
+
+  .metric-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, rgba(0,255,180,0.03) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .metric-label {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .metric-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .metric-card.danger-card .metric-value { color: var(--danger); text-shadow: 0 0 15px rgba(255,59,92,0.4); }
+  .metric-card.warn-card .metric-value { color: var(--warn); text-shadow: 0 0 15px rgba(255,170,0,0.4); }
+  .metric-card.info-card .metric-value { color: var(--accent2); }
+
+  .metric-change {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+  }
+
+  .metric-change.up { color: var(--danger); }
+  .metric-change.down { color: var(--accent); }
+
+  /* MAIN GRID */
+  .main-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .panel-header {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0,255,180,0.02);
+  }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 3px;
+    color: var(--accent);
+    text-transform: uppercase;
+  }
+
+  .panel-badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    padding: 3px 10px;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  .panel-badge.live {
+    border-color: var(--accent);
+    color: var(--accent);
+    animation: flash 2s ease-in-out infinite;
+  }
+
+  @keyframes flash {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ANOMALY CHART */
+  .chart-area {
+    padding: 20px;
+    height: 220px;
+    position: relative;
+  }
+
+  .chart-svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* DEVICE LIST */
+  .device-list { padding: 0; }
+
+  .device-item {
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+
+  .device-item:hover { background: rgba(0,255,180,0.04); }
+  .device-item:last-child { border-bottom: none; }
+
+  .device-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .device-status.ok { background: var(--accent); box-shadow: 0 0 6px var(--accent); }
+  .device-status.warn { background: var(--warn); box-shadow: 0 0 6px var(--warn); animation: pulse 1.5s infinite; }
+  .device-status.danger { background: var(--danger); box-shadow: 0 0 6px var(--danger); animation: pulse 0.8s infinite; }
+
+  .device-info { flex: 1; }
+
+  .device-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .device-meta {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  .device-score {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-align: right;
+  }
+
+  .device-score.ok { color: var(--accent); }
+  .device-score.warn { color: var(--warn); }
+  .device-score.danger { color: var(--danger); }
+
+  /* THREAT FEED */
+  .threat-feed { padding: 0; }
+
+  .threat-item {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 12px;
+    animation: slideIn 0.4s ease-out;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateX(20px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .threat-item:last-child { border-bottom: none; }
+
+  .threat-type {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.6rem;
+    padding: 3px 8px;
+    flex-shrink: 0;
+    height: fit-content;
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+
+  .threat-type.critical { background: rgba(255,59,92,0.2); color: var(--danger); border: 1px solid rgba(255,59,92,0.3); }
+  .threat-type.high { background: rgba(255,170,0,0.15); color: var(--warn); border: 1px solid rgba(255,170,0,0.3); }
+  .threat-type.medium { background: rgba(0,200,255,0.1); color: var(--accent2); border: 1px solid rgba(0,200,255,0.3); }
+  .threat-type.low { background: rgba(0,255,180,0.08); color: var(--accent); border: 1px solid var(--border); }
+
+  .threat-content { flex: 1; }
+
+  .threat-desc {
+    font-size: 0.78rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    font-weight: 500;
+  }
+
+  .threat-time {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--text-dim);
+  }
+
+  /* BOTTOM GRID */
+  .bottom-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+
+  /* TRUST SCORE METER */
+  .trust-meter {
+    padding: 24px;
+    text-align: center;
+  }
+
+  .trust-arc {
+    position: relative;
+    width: 160px;
+    margin: 0 auto 16px;
+  }
+
+  .trust-value {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -30%);
+    font-family: 'Orbitron', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    text-shadow: var(--glow);
+  }
+
+  .trust-label-bottom {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* AI MODEL STATUS */
+  .model-list { padding: 16px 20px; }
+
+  .model-item {
+    margin-bottom: 16px;
+  }
+
+  .model-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+  }
+
+  .model-name { color: var(--text); }
+  .model-acc { color: var(--accent); }
+
+  .model-bar {
+    height: 4px;
+    background: rgba(0,255,180,0.1);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .model-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 2px;
+    position: relative;
+    transition: width 1s ease-out;
+  }
+
+  .model-bar-fill::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 8px var(--accent);
+  }
+
+  /* POLICIES */
+  .policy-list { padding: 0; }
+
+  .policy-item {
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .policy-item:last-child { border-bottom: none; }
+
+  .policy-name {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--text);
+  }
+
+  .policy-status {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.62rem;
+    padding: 3px 10px;
+    letter-spacing: 1px;
+  }
+
+  .policy-status.enabled {
+    background: rgba(0,255,180,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,255,180,0.3);
+  }
+
+  .policy-status.partial {
+    background: rgba(255,170,0,0.1);
+    color: var(--warn);
+    border: 1px solid rgba(255,170,0,0.3);
+  }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 20px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+  }
+
+  /* TICKER */
+  .ticker-bar {
+    background: rgba(0,255,180,0.04);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 0;
+    overflow: hidden;
+    margin-bottom: 32px;
+  }
+
+  .ticker-inner {
+    display: flex;
+    gap: 60px;
+    animation: ticker 20s linear infinite;
+    white-space: nowrap;
+  }
+
+  @keyframes ticker {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .ticker-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ticker-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--accent);
+  }
+
+  .ticker-dot.red { background: var(--danger); }
+  .ticker-dot.yellow { background: var(--warn); }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="container">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="21,2 40,12 40,30 21,40 2,30 2,12" stroke="#00ffb4" stroke-width="1.5" fill="none"/>
+            <polygon points="21,8 34,15 34,27 21,34 8,27 8,15" stroke="#00ffb4" stroke-width="0.8" fill="none" opacity="0.5"/>
+            <circle cx="21" cy="21" r="5" fill="#00ffb4" opacity="0.9"/>
+            <line x1="21" y1="2" x2="21" y2="8" stroke="#00ffb4" stroke-width="1"/>
+            <line x1="40" y1="12" x2="34" y2="15" stroke="#00ffb4" stroke-width="1"/>
+            <line x1="40" y1="30" x2="34" y2="27" stroke="#00ffb4" stroke-width="1"/>
+            <line x1="21" y1="40" x2="21" y2="34" stroke="#00ffb4" stroke-width="1"/>
+            <line x1="2" y1="30" x2="8" y2="27" stroke="#00ffb4" stroke-width="1"/>
+            <line x1="2" y1="12" x2="8" y2="15" stroke="#00ffb4" stroke-width="1"/>
+          </svg>
+        </div>
+        <div>
+          <div class="logo-text">ZEROSHIELD</div>
+          <div class="logo-sub">ZERO TRUST IoT FRAMEWORK v2.4</div>
+        </div>
+      </div>
+
+      <nav class="nav-links">
+        <div class="nav-link active">DASHBOARD</div>
+        <div class="nav-link">DEVICES</div>
+        <div class="nav-link">POLICIES</div>
+        <div class="nav-link">AI ENGINE</div>
+        <div class="nav-link">REPORTS</div>
+      </nav>
+
+      <div class="header-status">
+        <div class="status-pill">
+          <div class="status-dot danger"></div>
+          3 CRITICAL
+        </div>
+        <div class="status-pill">
+          <div class="status-dot"></div>
+          SYSTEM SECURE
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-inner">
+    <div class="ticker-item"><div class="ticker-dot red"></div>ALERT: Anomalous traffic from sensor-cluster-7 — 14:32:01</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>AI MODEL RETRAINED — Accuracy: 98.7% — 13:45:00</div>
+    <div class="ticker-item"><div class="ticker-dot yellow"></div>Policy violation on gateway-node-3 — 13:12:44</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>247 devices verified — Zero Trust handshake complete</div>
+    <div class="ticker-item"><div class="ticker-dot red"></div>Lateral movement attempt blocked — IP: 10.0.4.22 — 12:58:17</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Firmware integrity check passed — 156 nodes</div>
+    <!-- Duplicate for seamless loop -->
+    <div class="ticker-item"><div class="ticker-dot red"></div>ALERT: Anomalous traffic from sensor-cluster-7 — 14:32:01</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>AI MODEL RETRAINED — Accuracy: 98.7% — 13:45:00</div>
+    <div class="ticker-item"><div class="ticker-dot yellow"></div>Policy violation on gateway-node-3 — 13:12:44</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>247 devices verified — Zero Trust handshake complete</div>
+    <div class="ticker-item"><div class="ticker-dot red"></div>Lateral movement attempt blocked — IP: 10.0.4.22 — 12:58:17</div>
+    <div class="ticker-item"><div class="ticker-dot"></div>Firmware integrity check passed — 156 nodes</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div>
+      <div class="hero-title">
+        <div class="line1">ZERO TRUST</div>
+        <div class="line2">IoT SECURITY</div>
+        <div class="line3">AI-POWERED ANOMALY DETECTION</div>
+      </div>
+      <p class="hero-desc">
+        Never trust, always verify. Our framework enforces continuous authentication, micro-segmentation, and real-time AI anomaly detection across every connected device in your infrastructure.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary">ACTIVATE SHIELD</button>
+        <button class="btn-secondary">VIEW THREATS</button>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="globe-ring"></div>
+      <div class="globe-ring"></div>
+      <div class="globe-ring"></div>
+      <div class="threat-node"></div>
+      <div class="threat-node"></div>
+      <div class="threat-node"></div>
+      <div class="globe-core">
+        <div class="globe-core-icon">🛡️</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics-row">
+    <div class="metric-card">
+      <div class="metric-label">// DEVICES ONLINE</div>
+      <div class="metric-value">247</div>
+      <div class="metric-change down">▲ 12 since yesterday</div>
+    </div>
+    <div class="metric-card danger-card">
+      <div class="metric-label">// ACTIVE THREATS</div>
+      <div class="metric-value">3</div>
+      <div class="metric-change up">▲ 2 in last hour</div>
+    </div>
+    <div class="metric-card warn-card">
+      <div class="metric-label">// ANOMALIES DETECTED</div>
+      <div class="metric-value">18</div>
+      <div class="metric-change up">▲ 5 today</div>
+    </div>
+    <div class="metric-card info-card">
+      <div class="metric-label">// AI ACCURACY</div>
+      <div class="metric-value">98.7%</div>
+      <div class="metric-change down">▲ 0.3% this week</div>
+    </div>
+  </div>
+
+  <!-- MAIN GRID -->
+  <div class="main-grid">
+    <!-- Anomaly Chart + Device List -->
+    <div>
+      <div class="panel" style="margin-bottom:20px">
+        <div class="panel-header">
+          <div class="panel-title">// ANOMALY DETECTION — REAL TIME</div>
+          <div class="panel-badge live">● LIVE</div>
+        </div>
+        <div class="chart-area">
+          <svg class="chart-svg" viewBox="0 0 700 180" preserveAspectRatio="none">
+            <!-- Grid lines -->
+            <line x1="0" y1="45" x2="700" y2="45" stroke="rgba(0,255,180,0.06)" stroke-width="1"/>
+            <line x1="0" y1="90" x2="700" y2="90" stroke="rgba(0,255,180,0.06)" stroke-width="1"/>
+            <line x1="0" y1="135" x2="700" y2="135" stroke="rgba(0,255,180,0.06)" stroke-width="1"/>
+
+            <!-- Normal traffic area -->
+            <defs>
+              <linearGradient id="normalGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(0,200,255,0.3)"/>
+                <stop offset="100%" stop-color="rgba(0,200,255,0)"/>
+              </linearGradient>
+              <linearGradient id="anomalyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="rgba(255,59,92,0.4)"/>
+                <stop offset="100%" stop-color="rgba(255,59,92,0)"/>
+              </linearGradient>
+            </defs>
+
+            <!-- Normal baseline area -->
+            <path d="M0,120 C50,115 100,118 150,112 C200,106 250,110 300,108 C350,106 400,112 450,110 C500,108 550,114 600,110 C650,106 700,108 700,108 L700,180 L0,180 Z"
+              fill="url(#normalGrad)" opacity="0.6"/>
+
+            <!-- Normal baseline line -->
+            <path d="M0,120 C50,115 100,118 150,112 C200,106 250,110 300,108 C350,106 400,112 450,110 C500,108 550,114 600,110 C650,106 700,108 700,108"
+              fill="none" stroke="rgba(0,200,255,0.7)" stroke-width="1.5"/>
+
+            <!-- Anomaly spike 1 -->
+            <path d="M480,108 C490,80 500,30 510,20 C520,10 530,35 540,80 C550,110 555,110 560,108"
+              fill="none" stroke="var(--danger)" stroke-width="2"/>
+            <path d="M480,108 C490,80 500,30 510,20 C520,10 530,35 540,80 C550,110 555,110 560,108 L560,180 L480,180 Z"
+              fill="url(#anomalyGrad)" opacity="0.5"/>
+
+            <!-- Anomaly spike 2 (smaller) -->
+            <path d="M200,108 C210,92 218,70 225,62 C232,54 238,72 245,92 C252,108 255,110 260,108"
+              fill="none" stroke="var(--warn)" stroke-width="1.5"/>
+
+            <!-- Anomaly dots -->
+            <circle cx="510" cy="20" r="5" fill="var(--danger)" opacity="0.9">
+              <animate attributeName="r" values="5;8;5" dur="1s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="225" cy="62" r="4" fill="var(--warn)" opacity="0.9">
+              <animate attributeName="r" values="4;6;4" dur="1.3s" repeatCount="indefinite"/>
+            </circle>
+
+            <!-- Current time line -->
+            <line x1="650" y1="0" x2="650" y2="180" stroke="rgba(0,255,180,0.4)" stroke-width="1" stroke-dasharray="4,4"/>
+            <circle cx="650" cy="108" r="4" fill="var(--accent)"/>
+
+            <!-- Labels -->
+            <text x="8" y="14" fill="rgba(0,255,180,0.4)" font-family="Share Tech Mono" font-size="10">HIGH</text>
+            <text x="8" y="95" fill="rgba(0,255,180,0.4)" font-family="Share Tech Mono" font-size="10">MED</text>
+            <text x="8" y="175" fill="rgba(0,255,180,0.4)" font-family="Share Tech Mono" font-size="10">LOW</text>
+            <text x="506" y="12" fill="var(--danger)" font-family="Share Tech Mono" font-size="9">ANOMALY</text>
+          </svg>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">// DEVICE TRUST SCORES</div>
+          <div class="panel-badge">247 MONITORED</div>
+        </div>
+        <div class="device-list">
+          <div class="device-item">
+            <div class="device-status danger"></div>
+            <div class="device-info">
+              <div class="device-name">sensor-cluster-7 / HVAC-CTRL</div>
+              <div class="device-meta">10.0.4.22 · Last seen 2m ago · Firmware v1.2.4</div>
+            </div>
+            <div class="device-score danger">12</div>
+          </div>
+          <div class="device-item">
+            <div class="device-status warn"></div>
+            <div class="device-info">
+              <div class="device-name">gateway-node-3 / EDGE-GW</div>
+              <div class="device-meta">10.0.1.3 · Last seen 1m ago · Firmware v2.0.1</div>
+            </div>
+            <div class="device-score warn">47</div>
+          </div>
+          <div class="device-item">
+            <div class="device-status ok"></div>
+            <div class="device-info">
+              <div class="device-name">cam-node-14 / IP-CAMERA</div>
+              <div class="device-meta">10.0.2.14 · Last seen 30s ago · Firmware v3.1.0</div>
+            </div>
+            <div class="device-score ok">94</div>
+          </div>
+          <div class="device-item">
+            <div class="device-status ok"></div>
+            <div class="device-info">
+              <div class="device-name">thermostat-22 / SMART-THERMO</div>
+              <div class="device-meta">10.0.3.22 · Last seen 1m ago · Firmware v1.8.2</div>
+            </div>
+            <div class="device-score ok">88</div>
+          </div>
+          <div class="device-item">
+            <div class="device-status ok"></div>
+            <div class="device-info">
+              <div class="device-name">actuator-05 / VALVE-CTRL</div>
+              <div class="device-meta">10.0.5.5 · Last seen 45s ago · Firmware v2.3.1</div>
+            </div>
+            <div class="device-score ok">91</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Threat Feed -->
+    <div>
+      <div class="panel" style="height: 100%;">
+        <div class="panel-header">
+          <div class="panel-title">// THREAT FEED</div>
+          <div class="panel-badge live">● LIVE</div>
+        </div>
+        <div class="threat-feed">
+          <div class="threat-item">
+            <div class="threat-type critical">CRITICAL</div>
+            <div class="threat-content">
+              <div class="threat-desc">Lateral movement detected — sensor-cluster-7 attempting unauthorized access to control subnet</div>
+              <div class="threat-time">14:32:01 · AI CONFIDENCE: 99.2%</div>
+            </div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-type high">HIGH</div>
+            <div class="threat-content">
+              <div class="threat-desc">Abnormal data exfiltration volume — gateway-node-3 sending 4.2x baseline traffic</div>
+              <div class="threat-time">14:28:44 · AI CONFIDENCE: 97.1%</div>
+            </div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-type critical">CRITICAL</div>
+            <div class="threat-content">
+              <div class="threat-desc">Firmware integrity violation — unexpected hash mismatch on sensor-cluster-7</div>
+              <div class="threat-time">14:19:32 · AI CONFIDENCE: 99.8%</div>
+            </div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-type medium">MEDIUM</div>
+            <div class="threat-content">
+              <div class="threat-desc">Policy deviation — thermostat-22 accessing out-of-scope API endpoint</div>
+              <div class="threat-time">13:58:11 · AI CONFIDENCE: 88.4%</div>
+            </div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-type high">HIGH</div>
+            <div class="threat-content">
+              <div class="threat-desc">Replay attack attempt — stale authentication token reuse on edge network</div>
+              <div class="threat-time">13:45:09 · AI CONFIDENCE: 95.6%</div>
+            </div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-type low">LOW</div>
+            <div class="threat-content">
+              <div class="threat-desc">Certificate expiry warning — cam-node-14 TLS cert expires in 7 days</div>
+              <div class="threat-time">13:12:00 · SYSTEM ALERT</div>
+            </div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-type medium">MEDIUM</div>
+            <div class="threat-content">
+              <div class="threat-desc">Brute force pattern — 47 failed auth attempts from actuator subnet in 60s</div>
+              <div class="threat-time">12:58:17 · AI CONFIDENCE: 91.2%</div>
+            </div>
+          </div>
+          <div class="threat-item">
+            <div class="threat-type low">LOW</div>
+            <div class="threat-content">
+              <div class="threat-desc">Clock drift detected — 3 devices out of sync by more than 30 seconds</div>
+              <div class="threat-time">12:30:00 · SYSTEM ALERT</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM GRID -->
+  <div class="bottom-grid">
+
+    <!-- Trust Score -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">// NETWORK TRUST SCORE</div>
+      </div>
+      <div class="trust-meter">
+        <div class="trust-arc">
+          <svg viewBox="0 0 160 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 20 90 A 60 60 0 0 1 140 90" stroke="rgba(0,255,180,0.1)" stroke-width="10" fill="none" stroke-linecap="round"/>
+            <path d="M 20 90 A 60 60 0 0 1 140 90" stroke="url(#arcGrad)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="188" stroke-dashoffset="35"/>
+            <defs>
+              <linearGradient id="arcGrad" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="var(--danger)"/>
+                <stop offset="50%" stop-color="var(--warn)"/>
+                <stop offset="100%" stop-color="var(--accent)"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <div class="trust-value">81</div>
+        </div>
+        <div class="trust-label-bottom">OVERALL TRUST INDEX</div>
+        <div style="margin-top:16px; display:flex; justify-content:center; gap:20px;">
+          <div style="text-align:center">
+            <div style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--accent)">94%</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--text-dim);margin-top:3px">AUTH RATE</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--warn)">82%</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--text-dim);margin-top:3px">COMPLIANCE</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-family:'Orbitron',monospace;font-size:1rem;color:var(--accent2)">68%</div>
+            <div style="font-family:'Share Tech Mono',monospace;font-size:0.6rem;color:var(--text-dim);margin-top:3px">POSTURE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI Models -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">// AI MODEL STATUS</div>
+        <div class="panel-badge">3 ACTIVE</div>
+      </div>
+      <div class="model-list">
+        <div class="model-item">
+          <div class="model-header">
+            <span class="model-name">Isolation Forest</span>
+            <span class="model-acc">98.7%</span>
+          </div>
+          <div class="model-bar"><div class="model-bar-fill" style="width:98.7%"></div></div>
+        </div>
+        <div class="model-item">
+          <div class="model-header">
+            <span class="model-name">LSTM Seq. Detector</span>
+            <span class="model-acc">96.2%</span>
+          </div>
+          <div class="model-bar"><div class="model-bar-fill" style="width:96.2%"></div></div>
+        </div>
+        <div class="model-item">
+          <div class="model-header">
+            <span class="model-name">Graph Neural Net</span>
+            <span class="model-acc">94.8%</span>
+          </div>
+          <div class="model-bar"><div class="model-bar-fill" style="width:94.8%"></div></div>
+        </div>
+        <div class="model-item">
+          <div class="model-header">
+            <span class="model-name">Autoencoder AE</span>
+            <span class="model-acc">91.3%</span>
+          </div>
+          <div class="model-bar"><div class="model-bar-fill" style="width:91.3%"></div></div>
+        </div>
+        <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-family:'Share Tech Mono',monospace;font-size:0.65rem;color:var(--text-dim);display:flex;justify-content:space-between;">
+          <span>LAST RETRAINED: 2h ago</span>
+          <span style="color:var(--accent)">ENSEMBLE ▲</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zero Trust Policies -->
+    <div class="panel">
+      <div class="panel-header">
+        <div class="panel-title">// ZERO TRUST POLICIES</div>
+      </div>
+      <div class="policy-list">
+        <div class="policy-item">
+          <div class="policy-name">Micro-segmentation</div>
+          <div class="policy-status enabled">ENFORCED</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">Mutual TLS Auth</div>
+          <div class="policy-status enabled">ENFORCED</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">Least Privilege Access</div>
+          <div class="policy-status enabled">ENFORCED</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">Continuous Verification</div>
+          <div class="policy-status enabled">ENFORCED</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">Device Attestation</div>
+          <div class="policy-status partial">PARTIAL</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">Encrypted Telemetry</div>
+          <div class="policy-status enabled">ENFORCED</div>
+        </div>
+        <div class="policy-item">
+          <div class="policy-name">Firmware Integrity</div>
+          <div class="policy-status partial">PARTIAL</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>ZEROSHIELD FRAMEWORK v2.4.1 · POWERED BY AI ANOMALY ENGINE</span>
+    <span id="clock">--:--:-- UTC</span>
+    <span>© 2026 · ALL SYSTEMS OPERATIONAL</span>
+  </footer>
+
+</div>
+
+<script>
+  // Live clock
+  function updateClock() {
+    const now = new Date();
+    const utc = now.toUTCString().split(' ')[4];
+    document.getElementById('clock').textContent = utc + ' UTC';
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Animate metric values counting up
+  function animateCount(el, target, suffix='') {
+    let current = 0;
+    const step = target / 40;
+    const interval = setInterval(() => {
+      current = Math.min(current + step, target);
+      el.textContent = (suffix === '%')
+        ? current.toFixed(1) + '%'
+        : Math.floor(current) + suffix;
+      if (current >= target) clearInterval(interval);
+    }, 30);
+  }
+
+  window.addEventListener('load', () => {
+    const metricValues = document.querySelectorAll('.metric-value');
+    const rawValues = [247, 3, 18, 98.7];
+    const suffixes = ['', '', '', '%'];
+    metricValues.forEach((el, i) => {
+      el.textContent = '0';
+      animateCount(el, rawValues[i], suffixes[i]);
+    });
+  });
+
+  // Nav interactions
+  document.querySelectorAll('.nav-link').forEach(link => {
+    link.addEventListener('click', function() {
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+      this.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
